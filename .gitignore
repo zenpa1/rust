@@ -19,3 +19,19 @@ target
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+<<<<<<< HEAD
+=======
+
+# Ignore the target directory where Rust puts builds
+**/target/
+
+# Ignore compiled binaries (files with no extension or .exe)
+hello_world/main
+hello_cargo/src/main
+
+# If you use VS Code
+.vscode/
+
+# MacOS junk
+.DS_Store
+>>>>>>> 97ff11c (added gitignore)
