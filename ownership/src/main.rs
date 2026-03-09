@@ -164,14 +164,85 @@
 //     assert_eq!(s_len1, s_len2);
 // }
 
-fn main() {
-    /*
-    Arrays have fixed length
-    Vectors have variable length as their elements are stored in the heap
-    */
-    let mut v: Vec<i32> = vec![1, 2, 3]; // vec! is a macro
-    v.push(4);
+// fn main() {
+//     /*
+//     Arrays have fixed length
+//     Vectors have variable length as their elements are stored in the heap
+//     */
+//     let mut v: Vec<i32> = vec![1, 2, 3]; // vec! is a macro
+//     v.push(4);
 
-    // Data CAN be aliased. Data CAN be mutated.
-    // ...but not both
+//     // Data CAN be aliased. Data CAN be mutated.
+//     // ...but not both
+// }
+
+// fn main() {
+//     let mut v: Vec<i32> = vec![1, 2, 3];
+
+//     let num: &i32 = &v[2];
+
+//     println!("The third element is {}", *num);
+//     println!("Again, it is {}", *num);
+//     // ^ Instead of dropping num after the first println!,
+//     // we can do it after its full usage
+//     // It's a problem if we use num again AFTER mutating v, though
+
+//     v.push(4);
+// }
+
+// fn main() {
+//     // init v with R+W+O
+//     let mut v: Vec<i32> = vec![1, 2, 3];
+
+//     // init num with R+O and *num with R+W
+//     let num: &mut i32 = &mut v[2];
+
+//     *num += 1;
+
+//     // after call, num and *num loses its perms
+//     println!("Third element is {}", *num);
+
+//     // given perms before ultimately loing them again
+//     println!("Vector is now {:?}", v);
+// }
+
+// fn main() {
+//     let mut v: Vec<i32> = vec![1, 2, 3];
+//     let num: &mut i32 = &mut v[2];
+//     *num += 1;
+//     let num2: &i32 = &*num; // Mutable ref can be "downgraded" to R-only
+//     println!("{} {}", *num, *num2);
+// }
+
+// fn main() {
+//     let mut x: i32 = 1;
+
+//     // lifetime of y starts here
+//     let y: &i32 = &x;
+
+//     // and ends here
+//     let z: i32 = *y;
+
+//     x += z;
+
+//     println!("{}", x);
+// }
+
+fn ascii_capitalize(v: &mut Vec<char>) {
+    let c: &char = &v[0];
+
+    if c.is_ascii_lowercase() {
+        let up = c.to_ascii_uppercase();
+        v[0] = up;
+    } else {
+        println!("Already capitalized: {:?}", v);
+    }
+}
+
+fn main() {
+    let mut vector: Vec<char> = vec!['A', 'b', 'c'];
+
+    ascii_capitalize(&mut vector);
+
+    println!("{:?}", vector);
 }
