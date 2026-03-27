@@ -147,7 +147,27 @@
 //     */
 // }
 
+// fn main() {
+//     let mut a = [0, 1, 2, 3];
+//     let x = &mut a[1];
+//     // unlike tuples, there are no diff places for a[0], a[1], etc.
+//     // uses a single place a[_] that represents all indexes of a
+
+//     *x += 1;
+//     // x and *x implicitly drop here
+
+//     println!("{a:?}");
+//     // :? is a formatting directive that tells Rust to use the
+//     // std::fmt::Debug
+// }
+
 fn main() {
+    let mut point = [0, 1];
+    let mut x = point[0];
+    let y = &mut point[1];
+    x += 1;
+    *y += 1;
+    println!("{} {}", point[0], point[1]);
     let mut name = (String::from("Ferris"), String::from("Rustacean"));
 
     let first = &name.0; // borrow name.0
