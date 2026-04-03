@@ -159,31 +159,136 @@
 //     println!("{num}");
 // }
 
+// fn main() {
+//     let random_kid = String::from("Random Kid"); // random_kid points to Random Kid
+//     let mut king = String::from("Von");
+
+//     // we move random_kid to take_ownership frame, but since it doesn't return it, it drops
+//     let random_parent = take_ownership(random_kid); // so now we get a unit value instead
+//     // more specifically, it says take_ownership returned, but there's no data, so ()
+//     println!("{:?}", random_parent); // prints the received unit value
+
+//     borrow_read(&king);
+//     borrow_write(&mut king); // just needs a mutable reference
+// }
+
+// // Contract A: I need to OWN the string and may drop it
+// fn take_ownership(s: String) {
+//     println!("{}", s); // ok to print
+// } // drop s (goodbye data gg)
+
+// // Contract B: I need to READ the string, but will NOT CHANGE IT
+// fn borrow_read(s: &String) {
+//     println!("{}", s);
+// }
+
+// // Contract C: I need to WRITE (change) the string, need exclusive access
+// fn borrow_write(s: &mut String) {
+//     s.push_str("!");
+//     println!("{}", s);
+// }
+
+// fn main() {
+//     let mut v: Vec<i32> = vec![1, 2, 3]; // r w o
+//     let num: &mut i32 = &mut v[2]; // num gets r o, *num gets r w
+//     *num += 1; // requires r w (goods)
+//     println!("third: {}", *num);
+//     let num2: &i32 = &v[0];
+//     println!("num: {}", num2);
+//     println!("Vector is now {:?}", v);
+// }
+
+// // overlapping access
+// fn main() {
+//     let mut v: Vec<i32> = vec![1, 2, 3]; // r w o
+//     let num: &mut i32 = &mut v[2]; // num gets r o, *num gets r w
+//     v.push(4); // attempted second mutable borrow
+//     // rule: many readers OR one writer
+//     *num += 1; // requires r w (goods)
+//     println!("third: {}", *num);
+//     println!("Vector is now {:?}", v);
+// }
+
+// // reborrowing/permission downgrading
+// fn main() {
+//     let mut v: Vec<i32> = vec![1, 2, 3];
+
+//     let num: &mut i32 = &mut v[2]; // *num gets R W
+
+//     // sub-alias relying on higher-level alias
+//     // called a reborrow
+//     // num is the parent and num2 is the child
+//     // while num2 (reader) exists, num (writer) is suspended from W
+//     let num2: &i32 = &*num; // *num rids W and retains R, *num2 gains R
+
+//     // *num += 1; // error: `*num` is assigned to here but it was already borrowed
+
+//     println!("{} {}", *num, *num2);
+// }
+
+// // borrow another mutable
+// fn main() {
+//     let mut v: Vec<i32> = vec![1, 2, 3];
+
+//     let num: &mut i32 = &mut v[2];
+
+//     let num2: &mut i32 = &mut *num;
+
+//     println!("{} {}", *num, *num2); // num becomes immutable reference
+// }
+
+// // double mutable again
+// fn main() {
+//     let mut v = vec![1, 2, 3];
+//     let num = &mut v[2];
+
+//     // Instead of a reader, let's try to make another writer from the first one
+//     let num2 = &mut *num;
+
+//     *num += 1; // Does this break?
+//     // println!("{}", num2); // breaks because num2 is called after drop
+//     println!("{}", num); // fine because num2 drop
+// }
+
+// // breaking exclusion principle
+// fn main() {
+//     let mut v = vec![1, 2, 3];
+//     let num = &mut v[2];
+//     let num2 = &mut *num;
+//     *num2 += 10;
+//     println!("{}", num2);
+//     *num += 1;
+//     println!("{}", num);
+// }
+
+// // lifetime
+// fn main() {
+//     let mut x = 1; // x is 1 in stack frame
+//     let y = &x; // y points to x's 1
+//     let z = *y; // z points to y's value, which is x's 1 WRONG ASSUMPTION
+//     // since integer has copy trait, z actually duplicates y's DEREFERENCED value instead, which is 1
+//     // implicitly drop y (non-lexical lifetime)
+//     x += z; // x adds 1, making x = 2
+//     // z stays as 1
+//     println!("{} {z}", x)
+// }
+
+// fn main() {
+//     let mut s = String::from("hello");
+//     let r = &s; // r gets R from S (flows down)
+//     // immutable borrow
+
+//     s.push_str(" world"); // error: no W permission as it lent R to r
+//     // mutable borrow occurs
+
+//     println!("{}", r); // immutable borrow used here
+// }
+
+fn incr(n: &mut i32) {
+    *n += 1;
+}
 fn main() {
-    let random_kid = String::from("Random Kid"); // random_kid points to Random Kid
-    let mut king = String::from("Von");
-
-    // we move random_kid to take_ownership frame, but since it doesn't return it, it drops
-    let random_parent = take_ownership(random_kid); // so now we get a unit value instead
-    // more specifically, it says take_ownership returned, but there's no data, so ()
-    println!("{:?}", random_parent); // prints the received unit value
-
-    borrow_read(&king);
-    borrow_write(&mut king); // just needs a mutable reference
-}
-
-// Contract A: I need to OWN the string and may drop it
-fn take_ownership(s: String) {
-    println!("{}", s); // ok to print
-} // drop s (goodbye data gg)
-
-// Contract B: I need to READ the string, but will NOT CHANGE IT
-fn borrow_read(s: &String) {
-    println!("{}", s);
-}
-
-// Contract C: I need to WRITE (change) the string, need exclusive access
-fn borrow_write(s: &mut String) {
-    s.push_str("!");
-    println!("{}", s);
+    let mut n = 1;
+    incr(&mut n);
+    println!("{n}");
 }
