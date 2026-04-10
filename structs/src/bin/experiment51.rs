@@ -94,4 +94,13 @@ fn main() {
     println!("User1 active: {}", user1.active); // works fine
     // why? partial move, we don't use the moved value
     // println!("User1 username: {}", user1.username); // boom
+
+    struct Point(i32, i32, i32);
+
+    let origin = Point(1, 2, 3);
+
+    let Point(x, y, z) = origin;
+    println!("x: {x}");
+    println!("y: {y}");
+    println!("z: {z}");
 }
