@@ -9,16 +9,13 @@ enum MagicalEffect {
 struct Spell {
     name: String,
     // Option because some spells may have no effect
-    effect: Option<MagicalEffect>
+    effect: Option<MagicalEffect>,
 }
 
 impl Spell {
     // Spell constructor
     fn new(name: String, effect: Option<MagicalEffect>) -> Self {
-        Self {
-            name,
-            effect,
-        }
+        Self { name, effect }
     }
 
     fn cast(&self) {
@@ -41,15 +38,19 @@ impl Spell {
     fn danger_check(&self) {
         // uhh idk how to explain this
         if let Some(MagicalEffect::Damage(dmg)) = &self.effect {
-            println!("DANGER: This '{}' spell can hurt people! Deals {} damage!", self.name, dmg);
+            println!(
+                "DANGER: This '{}' spell can hurt people! Deals {} damage!",
+                self.name, dmg
+            );
         }
     }
 }
 
-
 fn main() {
-    let offensive_spell: Spell = Spell::new("Fireball".to_string(), Some(MagicalEffect::Damage(30)));
-    let healing_spell: Spell = Spell::new(String::from("Lesser Heal"), Some(MagicalEffect::Heal(15)));
+    let offensive_spell: Spell =
+        Spell::new("Fireball".to_string(), Some(MagicalEffect::Damage(30)));
+    let healing_spell: Spell =
+        Spell::new(String::from("Lesser Heal"), Some(MagicalEffect::Heal(15)));
     let harmless_spell: Spell = Spell::new("Fireworks".to_string(), None);
 
     offensive_spell.cast();
