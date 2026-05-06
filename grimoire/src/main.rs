@@ -1,4 +1,4 @@
-use grimoire::{Fireball, ManaPool, ManaPotion, WaterSpout as Tsunami};
+use grimoire::prelude::*;
 
 fn main() {
     // Since we use grimoire::, we can skip straight to it
