@@ -17,4 +17,10 @@ fn main() {
     let water_spell: Tsunami = Tsunami { damage: 30 };
 
     water_spell.cast(&mut player_mana);
+
+    let teleport_rune: TeleportRune = TeleportRune {};
+
+    mana_potion.drink(&mut player_mana);
+    mana_potion.drink(&mut player_mana);
+    teleport_rune.activate(&mut player_mana);
 }
