@@ -38,4 +38,9 @@ fn main() {
 
     let s11: String = format!("{s7}-{s8}-{s9}");
     println!("{s11}");
+
+    let hello: &str = "Здравствуйте";
+
+    let russia: &str = &hello[0..4];
+    println!("{russia}");
 }
