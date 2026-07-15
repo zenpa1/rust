@@ -1,3 +1,5 @@
 fn main() {
-    println!("Hello, world!");
+    let v: Vec<i32> = vec![1, 2, 3];
+
+    v[99];
 }
