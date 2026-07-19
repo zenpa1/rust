@@ -71,11 +71,11 @@ fn main() {
 //     Ok(username) // return if Ok
 // }
 
-// // Even shorter using a new fn
-// fn read_username_from_file() -> Result<String, io::Error> {
-//     // Convenient function as it is a fairly common operation
-//     fs::read_to_string("hello.txt")
-// }
+// Even shorter using a new fn
+fn read_username_from_file() -> Result<String, io::Error> {
+    // Convenient function as it is a fairly common operation
+    fs::read_to_string("hello.txt")
+}
 
 fn last_char_of_first_line(text: &str) -> Option<char> {
     text.lines().next()?.chars().last()
@@ -87,14 +87,14 @@ fn last_char_of_first_line(text: &str) -> Option<char> {
     */
 }
 
-fn read_username_from_file() -> Option<String> {
-    // ok() -> converts from Result to Option
-    let mut username_file = File::open("hello.txt").ok()?;
+// fn read_username_from_file() -> Option<String> {
+//     // ok() -> converts from Result to Option
+//     let mut username_file = File::open("hello.txt").ok()?;
 
-    // ok_or() -> converts from Option to Result (supply missing error data manually)
-    // let weapon = inventory.get_equipped_weapon().ok_or(CombatError::NoWeaponEquipped);
+//     // ok_or() -> converts from Option to Result (supply missing error data manually)
+//     // let weapon = inventory.get_equipped_weapon().ok_or(CombatError::NoWeaponEquipped);
 
-    let mut username = String::new();
-    username_file.read_to_string(&mut username).ok()?;
-    Some(username)
-}
+//     let mut username = String::new();
+//     username_file.read_to_string(&mut username).ok()?;
+//     Some(username)
+// }
