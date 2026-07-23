@@ -1,7 +1,6 @@
-use std::fs;
+use crate::game::Minion;
 use std::io::Error;
 use std::num::ParseIntError;
-use crate::game::Minion;
 
 #[derive(Debug)]
 enum LoadingError {
@@ -62,7 +61,11 @@ mod game {
 fn main() {
     match read_minion_data() {
         Ok(minion) => {
-            println!("Success! The minion has {} mana and is Level {}.", minion.get_mana(), minion.get_level());
+            println!(
+                "Success! The minion has {} mana and is Level {}.",
+                minion.get_mana(),
+                minion.get_level()
+            );
         }
         Err(LoadingError::FileAccessFailed(err)) => {
             println!("Failed to access file! {}", err);
@@ -82,7 +85,7 @@ fn main() {
 fn read_minion_data() -> Result<Minion, LoadingError> {
     // Read to string to skip byte management
     let string = fs::read_to_string("minion.txt")?;
-    
+
     // Split by delimiter
     let mut parts = string.split(',');
 
@@ -94,13 +97,15 @@ fn read_minion_data() -> Result<Minion, LoadingError> {
     ? -> unwrap Result, propagate Err if invalid
     */
     let mana_str: &str = parts.next().ok_or(LoadingError::MissingDelimiterError)?;
-    if mana_str.is_empty() { // check if string does not exist
+    if mana_str.is_empty() {
+        // check if string does not exist
         return Err(LoadingError::MissingParameterError); // wrap in Err for fn signature
     }
     let mana: u32 = mana_str.trim().parse::<u32>()?;
 
     let level_str: &str = parts.next().ok_or(LoadingError::MissingDelimiterError)?;
-    if level_str.is_empty() { // check if string does not exist
+    if level_str.is_empty() {
+        // check if string does not exist
         return Err(LoadingError::MissingParameterError); // wrap in Err for fn signature
     }
     let level: u32 = level_str.trim().parse::<u32>()?;
