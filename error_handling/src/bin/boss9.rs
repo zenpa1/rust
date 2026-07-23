@@ -10,6 +10,12 @@ enum LoadingError {
 
     // Number Parse Error (e.g., "hi")
     IntegerParseFailed(ParseIntError),
+
+    // Delimiter Error (e.g., 50)
+    MissingDelimiterError,
+
+    // Parameter Error (e.g., blank file or missing level)
+    MissingParameterError,
 }
 
 impl From<Error> for LoadingError {
@@ -64,6 +70,12 @@ fn main() {
         Err(LoadingError::IntegerParseFailed(err)) => {
             println!("Failed to parse file contents! {}", err);
         }
+        Err(LoadingError::MissingDelimiterError) => {
+            println!("Failed to find a delimiter!");
+        }
+        Err(LoadingError::MissingParameterError) => {
+            println!("Missing required parameters!");
+        }
     }
 }
 
@@ -81,8 +93,17 @@ fn read_minion_data() -> Result<Minion, LoadingError> {
     parse::<u32>() -> parse to u32 value explicitly
     ? -> unwrap Result, propagate Err if invalid
     */
-    let mana: u32 = parts.next().expect("Failed to parse mana.").trim().parse::<u32>()?;
-    let level: u32 = parts.next().expect("Failed to parse level.").trim().parse::<u32>()?;
+    let mana_str: &str = parts.next().ok_or(LoadingError::MissingDelimiterError)?;
+    if mana_str.is_empty() { // check if string does not exist
+        return Err(LoadingError::MissingParameterError); // wrap in Err for fn signature
+    }
+    let mana: u32 = mana_str.trim().parse::<u32>()?;
+
+    let level_str: &str = parts.next().ok_or(LoadingError::MissingDelimiterError)?;
+    if level_str.is_empty() { // check if string does not exist
+        return Err(LoadingError::MissingParameterError); // wrap in Err for fn signature
+    }
+    let level: u32 = level_str.trim().parse::<u32>()?;
 
     // Return new Minion if successfully parsed
     // Not sure how to explain why it needs Ok(), but I assume it's because
