@@ -1,4 +1,4 @@
-use generics_traits_lifetimes::{NewsArticle, SocialPost, Summary};
+use generics_traits_lifetimes::{NewsArticle, SocialPost, Summary, notify};
 
 fn main() {
     let post = SocialPost {
@@ -20,4 +20,6 @@ fn main() {
 
     println!("1 new post: {}", post.summarize());
     println!("New article available! {}", article.summarize());
+    notify(&post); // calls the summarize method in its item parameter
+    notify(&article);
 }

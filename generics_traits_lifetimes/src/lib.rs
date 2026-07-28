@@ -9,10 +9,6 @@ pub trait Summary {
         // Can call other methods in the same trait
         format!("(Read more from {}...)", self.summarize_author())
     }
-
-    pub fn notify(item: &impl Summary) {
-        println!("Breaking news! {}", item.summarize());
-    }
 }
 
 pub struct NewsArticle {
@@ -55,6 +51,16 @@ impl Summary for SocialPost {
     fn summarize_author(&self) -> String {
         format!("@{}", self.username)
     }
+}
+
+//
+// pub fn notify(item: &impl Summary) {
+//     println!("Breaking news! {}", item.summarize());
+// }
+
+// Trait Bound Syntax
+pub fn notify<T: Summary>(item: &T) {
+    println!("Breaking news! {}", item.summarize());
 }
 
 // fun stuff
