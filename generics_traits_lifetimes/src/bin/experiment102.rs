@@ -21,5 +21,6 @@ fn main() {
     println!("1 new post: {}", post.summarize());
     println!("New article available! {}", article.summarize());
     // notify(&post, &article); // calls the summarize method in its item parameter
-    notify(&article, String::from("hello world"));
+    // notify(&article, String::from("hello world"));
+    notify(&article);
 }

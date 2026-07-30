@@ -1,3 +1,5 @@
+use std::fmt;
+
 // pub trait Summary {
 //     fn summarize(&self) -> String;
 // }
@@ -30,6 +32,19 @@ impl Summary for NewsArticle {
 
     fn summarize_author(&self) -> String {
         format!("@{}", self.author)
+    }
+}
+
+impl fmt::Display for NewsArticle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "\"{}\" by {} ({})\n{}",
+            self.headline,
+            self.author,
+            self.location,
+            self.content
+        )
     }
 }
 
@@ -73,10 +88,10 @@ impl Summary for SocialPost {
 
 // }
 
-// Multiple parameters, not all requiring the &impl
-pub fn notify(item1: &impl Summary, item2: String) {
-    println!("Breaking news! {}. {}.", item1.summarize(), item2)
-}
+// // Multiple parameters, not all requiring the &impl
+// pub fn notify(item1: &impl Summary, item2: String) {
+//     println!("Breaking news! {}. {}.", item1.summarize(), item2)
+// }
 
 // // Multiple trait bounds (diff types)
 // pub fn notify(item: &(impl Summary + Display)) {
@@ -87,6 +102,10 @@ pub fn notify(item1: &impl Summary, item2: String) {
 // pub fn notify<T: Summary + Display>(item: &T) {
 
 // }
+
+pub fn notify(item: &(impl Summary + fmt::Display)) {
+    println!("hello world! {item}");
+}
 
 // fun stuff
 pub trait Character {
