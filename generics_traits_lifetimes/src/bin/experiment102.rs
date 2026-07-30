@@ -1,4 +1,4 @@
-use generics_traits_lifetimes::{NewsArticle, SocialPost, Summary, notify};
+use generics_traits_lifetimes::{NewsArticle, Pair, SocialPost, Summary, notify};
 
 fn main() {
     let post = SocialPost {
@@ -23,4 +23,10 @@ fn main() {
     // notify(&post, &article); // calls the summarize method in its item parameter
     // notify(&article, String::from("hello world"));
     notify(&article);
+
+    let str_pair: Pair<String> = Pair::new(String::from("hello"), String::from("world"));
+    let u32_pair: Pair<u32> = Pair::new(5, 10);
+
+    println!("{str_pair:?}");
+    println!("{u32_pair:?}");
 }

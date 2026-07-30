@@ -1,4 +1,5 @@
 use std::fmt;
+use std::fmt::Display;
 
 // pub trait Summary {
 //     fn summarize(&self) -> String;
@@ -40,10 +41,7 @@ impl fmt::Display for NewsArticle {
         write!(
             f,
             "\"{}\" by {} ({})\n{}",
-            self.headline,
-            self.author,
-            self.location,
-            self.content
+            self.headline, self.author, self.location, self.content
         )
     }
 }
@@ -118,27 +116,46 @@ pub fn notify(item: &(impl Summary + fmt::Display)) {
 //     }
 // }
 
-fn returns_summarizable(switch: bool) -> impl Summary {
-    if switch {
-        NewsArticle {
-            headline: String::from(
-                "Penguins win the Stanley Cup Championship!",
-            ),
-            location: String::from("Pittsburgh, PA, USA"),
-            author: String::from("Iceburgh"),
-            content: String::from(
-                "The Pittsburgh Penguins once again are the best \
-                 hockey team in the NHL.",
-            ),
-        }
-    } else {
-        SocialPost {
-            username: String::from("horse_ebooks"),
-            content: String::from(
-                "of course, as you probably already know, people",
-            ),
-            reply: false,
-            repost: false,
+// // will not work as impl Trait can only be used to return a single type
+// fn returns_summarizable(switch: bool) -> impl Summary {
+//     if switch {
+//         NewsArticle {
+//             headline: String::from("Penguins win the Stanley Cup Championship!"),
+//             location: String::from("Pittsburgh, PA, USA"),
+//             author: String::from("Iceburgh"),
+//             content: String::from(
+//                 "The Pittsburgh Penguins once again are the best \
+//                  hockey team in the NHL.",
+//             ),
+//         }
+//     } else {
+//         SocialPost {
+//             username: String::from("horse_ebooks"),
+//             content: String::from("of course, as you probably already know, people"),
+//             reply: false,
+//             repost: false,
+//         }
+//     }
+// }
+
+#[derive(Debug)]
+pub struct Pair<T> {
+    pub x: T, // make pub for derive to print it
+    pub y: T, // if not pub, cannot access to print
+}
+
+impl<T> Pair<T> {
+    pub fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+
+impl<T: Display + PartialOrd> Pair<T> {
+    pub fn cmp_display(&self) {
+        if self.x >= self.y {
+            println!("The largest member is x = {}", self.x);
+        } else {
+            println!("The largest number is y = {}", self.y);
         }
     }
 }
