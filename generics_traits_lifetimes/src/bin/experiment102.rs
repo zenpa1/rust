@@ -14,12 +14,12 @@ fn main() {
         author: String::from("Iceburgh"),
         content: String::from(
             "The Pittsburgh Penguins once again are the best \
-             hockey team in the NHL.",
+            hockey team in the NHL.",
         ),
     };
 
     println!("1 new post: {}", post.summarize());
     println!("New article available! {}", article.summarize());
-    notify(&post); // calls the summarize method in its item parameter
-    notify(&article);
+    // notify(&post, &article); // calls the summarize method in its item parameter
+    notify(&article, String::from("hello world"));
 }

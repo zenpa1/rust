@@ -58,10 +58,35 @@ impl Summary for SocialPost {
 //     println!("Breaking news! {}", item.summarize());
 // }
 
-// Trait Bound Syntax
-pub fn notify<T: Summary>(item: &T) {
-    println!("Breaking news! {}", item.summarize());
+// // Trait Bound Syntax
+// pub fn notify<T: Summary>(item: &T) {
+//     println!("Breaking news! {}", item.summarize());
+// }
+
+// // Multiple parameters, different types
+// pub fn notify(item1: &impl Summary, item2: &impl Summary) {
+//     println!("Breaking news! {}, along with a post: {}", item1.summarize(), item2.summarize())
+// }
+
+// // Multiple parameters, same type
+// pub fn notify<T: Summary>(item1: &T, item2: &T) {
+
+// }
+
+// Multiple parameters, not all requiring the &impl
+pub fn notify(item1: &impl Summary, item2: String) {
+    println!("Breaking news! {}. {}.", item1.summarize(), item2)
 }
+
+// // Multiple trait bounds (diff types)
+// pub fn notify(item: &(impl Summary + Display)) {
+
+// }
+
+// // Multiple trait bounds (same type)
+// pub fn notify<T: Summary + Display>(item: &T) {
+
+// }
 
 // fun stuff
 pub trait Character {
