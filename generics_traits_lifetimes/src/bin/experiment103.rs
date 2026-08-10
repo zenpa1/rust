@@ -1,5 +1,5 @@
 fn main() {
-    let r: &i32; // can be initialized without a value though!
+    // let r: &i32; // can be initialized without a value though!
 
     // {
     //     let x = 5;
@@ -10,7 +10,20 @@ fn main() {
 
     // this block can be commented out and it would still compile
     // because r was not used, so even if it doesn't have a value, it compiles
+    // let x = 5;
+    // r = &x;
+
     let x = 5;
-    r = &x;
+    let r = &x;
     println!("r: {}", r);
+
+    let string1 = String::from("abcd");
+    let string2 = "xyz";
+
+    let result = longest(string1.as_str(), string2);
+    println!("The longest string is {result}");
+}
+
+fn longest(x: &str, y: &str) -> &str {
+    if x.len() > y.len() { x } else { y }
 }
