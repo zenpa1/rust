@@ -39,7 +39,7 @@ fn main() {
 
     result = longest(&string1, &string2);
     drop(string2); // if string literal, does nothing!
-    // but if string,
+    // but if string, it is dropped as it is owned
 
     println!("{result}");
 }
