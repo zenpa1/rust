@@ -32,7 +32,12 @@ fn main() {
     //     println!("The longest string is {result}"); // valid as it is still within scope
     // }
 
-
+    let novel = String::from("Call me Ishmael. Some years ago...");
+    let first_sentence = novel.split('.').next().unwrap();
+    let i = ImportantExcerpt {
+        part: first_sentence,
+    }; // ImportantExcerpt must not outlive its reference
+    println!("{i:?}");
 }
 
 //     // scope outlive example
@@ -82,10 +87,15 @@ fn main() {
 
 //     // but if it a string slice directly hardcoded into our binary...
 //     let result = "really long string";
-//     result
+//     resultW
 // }
 
 fn longest(x: &str, y: &str) -> String {
     let result = String::from("really long string");
     result
+}
+
+#[derive(Debug)]
+struct ImportantExcerpt<'a> {
+    part: &'a str, // string slice
 }
