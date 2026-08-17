@@ -99,3 +99,17 @@ fn longest(x: &str, y: &str) -> String {
 struct ImportantExcerpt<'a> {
     part: &'a str, // string slice
 }
+
+impl<'a> ImportantExcerpt<'a> {
+    fn level(&self) -> i32 {
+        // first rule applied: one lifetime parameter -> apply to output lifetime
+        3
+    }
+
+    fn announce_and_return_part(&self, announcement: &str) -> &str {
+        // first rule applied: two separate lifetimes for two separate params
+        // third rule applied: lifetime of self is applied to output lifetime
+        println!("Attention please: {announcement}");
+        self.part
+    }
+}
