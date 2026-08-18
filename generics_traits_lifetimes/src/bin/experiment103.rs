@@ -101,6 +101,9 @@ struct ImportantExcerpt<'a> {
 }
 
 impl<'a> ImportantExcerpt<'a> {
+    // impl<'a> - declaration of generic lifetime variable
+    // ImportantExcerpt<'a> - application of generic lifetime variable
+    // similar to impl<T> Pair<T> (generic type parameter)
     fn level(&self) -> i32 {
         // first rule applied: one lifetime parameter -> apply to output lifetime
         3
