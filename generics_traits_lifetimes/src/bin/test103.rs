@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 // // Experiment 1
 // fn main() {
 //     let outer = String::from("hello");
@@ -69,8 +71,21 @@ impl<'a> Relic<'a> { // impl<'a, 'b> is an anti-pattern as we tie 'b to the ENTI
     } // 'b is born when translate is called and dies when translate finishes
 }
 
+// Generic lifetime params and generic type params go inside the angle bracket list
+fn longest_with_an_announcement<'a, T>(
+    x: &'a str, 
+    y: &'a str, 
+    ann: T,) -> &'a str where 
+T: Display, {
+    println!("Announcement! {ann}");
+    if x.len() > y.len() { x } else { y }
+}
+
 fn main() {
     let relic = Relic { inscription: "Golden Statue of Liberty" };
     println!("{}", relic.read_inscription());
     println!("{}", relic.translate("Statue of Evil"));
+
+    let longest_str = longest_with_an_announcement("hello_world", "wow", String::from("I got this."));
+    println!("{}", longest_str);
 }
