@@ -1,4 +1,15 @@
 fn main() {
+    let artifact1 = Artifact {
+        fragment: "Divinity Scroll",
+        weight: 5,
+    };
+
+    let artifact2 = Artifact {
+        fragment: "Nexus Coin",
+        weight: 500,
+    };
+
+    arbiter(&artifact1.fragment, &artifact2.fragment, "Announcement!");
 }
 
 struct Artifact<'a> {
@@ -10,6 +21,12 @@ trait Weight {
     // fn compare_weight(&self, competitor: &Artifact) -> u32; // Requires the return type if we plan to return something
 
     fn get_weight(&self) -> u32; // Required method
+}
+
+impl<'a> Weight for Artifact<'a> {
+    fn get_weight(&self) -> u32 {
+        self.weight
+    }
 }
 
 // // Approach 1: Implement the Weight trait on Artifact
@@ -29,14 +46,15 @@ trait Weight {
 
 // Approach 2: Implement the comparison method in general
 // This way, anything that implements Weight can just return their weight
-fn arbiter<'b>(x: &impl Weight, y: &impl Weight, ann: &'b str) -> &impl Weight {
+// Utilize generics to ensure that the same type is used even if separate types both implement Weight
+fn arbiter<'a, 'b, T: Weight>(x: &'a T, y: &'a T, ann: &'b str) -> &'a T {
     // Print the announcement
     println!("{}", ann);
 
     // Compare weights and return the reference to the heavier entity
     if x.get_weight() > y.get_weight() {
-        &x
+        x // x is already a reference, so &x is a reference to a reference
     } else {
-        &y
+        y
     }
 }
