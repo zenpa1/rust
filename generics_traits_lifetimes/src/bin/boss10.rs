@@ -6,10 +6,16 @@ fn main() {
 
     let artifact2 = Artifact {
         fragment: "Nexus Coin",
-        weight: 500,
+        weight: 30,
     };
 
-    arbiter(&artifact1.fragment, &artifact2.fragment, "Announcement!");
+    // x and y expect a generic type T implementing Weight
+    let (winner, loser): (&Artifact, &Artifact) = arbiter(&artifact1, &artifact2, "Announcement!");
+
+    // The winner displays, but how do we display who lost in comparison?
+    // Also, this line will only work for Artifacts due to winner.fragment
+    // -- The fix? Create a get_name() required method and implement one for Artifact!
+    println!("{} wins weighing {} points over {} weighing {} points!", winner.get_name(), winner.get_weight(), loser.get_name(), loser.get_weight());
 }
 
 struct Artifact<'a> {
@@ -19,11 +25,15 @@ struct Artifact<'a> {
 
 trait Weight {
     // fn compare_weight(&self, competitor: &Artifact) -> u32; // Requires the return type if we plan to return something
-
+    fn get_name(&self) -> &str; // Required method (meaning every struct MUST have a name)
     fn get_weight(&self) -> u32; // Required method
 }
 
 impl<'a> Weight for Artifact<'a> {
+    fn get_name(&self) -> &str {
+        self.fragment // Our own implementation for Artifacts specifically!
+    }
+
     fn get_weight(&self) -> u32 {
         self.weight
     }
@@ -44,17 +54,32 @@ impl<'a> Weight for Artifact<'a> {
 //     }
 // }
 
-// Approach 2: Implement the comparison method in general
-// This way, anything that implements Weight can just return their weight
-// Utilize generics to ensure that the same type is used even if separate types both implement Weight
-fn arbiter<'a, 'b, T: Weight>(x: &'a T, y: &'a T, ann: &'b str) -> &'a T {
+// // Approach 2: Implement the comparison method in general
+// // This way, anything that implements Weight can just return their weight
+// // Utilize generics to ensure that the same type is used even if separate types both implement Weight
+// // 'a refers to the lifetime of the reference of whichever implements Weight
+// // 'b refers to the lifetime of the announcement (smaller than 'a)
+// fn arbiter<'a, 'b, T: Weight>(x: &'a T, y: &'a T, ann: &'b str) -> &'a T {
+//     // Print the announcement
+//     println!("{}", ann);
+
+//     // Compare weights and return the reference to the heavier entity
+//     if x.get_weight() > y.get_weight() {
+//         x // x is already a reference, so &x is a reference to a reference
+//     } else {
+//         y
+//     }
+// }
+
+// Upgrade: If we wanted to display both winner and loser, use a tuple
+fn arbiter<'a, 'b, T: Weight>(x: &'a T, y: &'a T, ann: &'b str) -> (&'a T, &'a T) {
     // Print the announcement
     println!("{}", ann);
 
-    // Compare weights and return the reference to the heavier entity
+    // Compare weights and return references to both the winner and the loser
     if x.get_weight() > y.get_weight() {
-        x // x is already a reference, so &x is a reference to a reference
+        (x, y)
     } else {
-        y
+        (y, x)
     }
 }
