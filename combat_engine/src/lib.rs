@@ -9,15 +9,46 @@ pub fn heal(current_hp: u32, max_hp: u32, healing: u32) -> u32 {
 }
 
 // Test B Materials
+#[derive(Debug, PartialEq)]
 enum Status {
-    Burn(u32),
-    Poison(u32),
+    /*
+    Concept - an enum wherein its variants are pure tags with no values attached,
+    representing the IDEA such as Poison
+    Instance - a struct or enum called ActiveDebuf that pairs an Element with a u32 value,
+    such as a Poison debuff ticking for 10 damage
+    */
+    Burn,
+    Poison,
 }
 
 struct Undead {
     hp: u32,
-    resistance: Status,
-    weakness: Status,
+    resistance: Vec<Status>, // A list of resistances
+    weakness: Vec<Status>, // A list of weaknesses
+}
+
+impl Undead {
+    fn apply_status(&self, status: &Status) -> bool {
+        /*
+        matches! - for knowing something without extracting data, requires hardcoded reference,
+        takes a variable and a pattern and returns a boolean, such as
+        matches!(incoming_attack, Status::Poison) wherein Status::Poison is hardcoded
+
+        if let - targets one specific variant and extracts its data in a single line,
+        instead of full matching just for one variant, such as
+        if let Status::Poison(10) = incoming_attack { ... damage_amount };
+        */
+
+        // Iterate through resistance list and match
+        for resistance in &self.resistance {
+            if status == resistance { // For comparing two variables dynamically
+                println!("Undead is resistant to {status:?}!");
+                return false;
+            }
+        }
+
+        true
+    }
 }
 
 pub fn dmg(hp: u32, dmg: u32) -> u32 {
@@ -45,10 +76,11 @@ mod tests {
     fn poison_immunity() {
         let undead: Undead = Undead {
             hp: 50,
-            resistance: Status::Poison(0), // Enums designed to hold a value (u32)
-            weakness: Status::Burn(15),
+            resistance: vec![Status::Poison],
+            weakness: vec![Status::Burn],
         };
 
-        match undead.resistance {}
+        // assert_eq!(undead.apply_status(&Status::Poison), true, "Alert: Poison was applied to an Undead entity."); // fail
+        assert_eq!(undead.apply_status(&Status::Poison), false, "Alert: Poison was applied to an Undead entity."); // pass
     }
 }
