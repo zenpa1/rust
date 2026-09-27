@@ -28,12 +28,42 @@ pub fn damage(entity: &mut Undead, damage: u32) {
     // on a target with 0 HP left (useless calculation)
 
     if entity.hp == 0 {
-        panic!("Entities with 0 HP must not be attacked.");
+        panic!("Cannot attack a fallen entity");
     } else {
         entity.hp -= damage; // Mutation, don't forget
     }
 }
 
+// Test D Materials
+pub struct Encounter {
+    id: u32,
+}
+
+impl Encounter {
+    fn validate_encounter_id(self, valid_ids: &[u32]) -> Result<Encounter, String> {
+        // Issue with this code: we trigger the else Err block before even checking the other IDs
+        //     for id in valid_ids {
+        //         if self.id == id {
+        //             Ok(self)
+        //         } else {
+        //             Err(String::from(
+        //                 "Encounter ID is not part of the valid ID list.",
+        //             ))
+        //         }
+        //     }
+        // }
+
+        // Easy fix: does the ID list contain our ID?
+        match valid_ids.contains(&self.id) {
+            true => Ok(self),
+            false => Err(String::from(
+                "Encounter ID is not part of the valid ID list.",
+            )),
+        }
+    }
+}
+
+// Multi-test Materials
 pub struct Undead {
     hp: u32,
     resistance: Vec<Status>, // A list of resistances
@@ -63,10 +93,6 @@ impl Undead {
 
         true
     }
-}
-
-pub fn dmg(hp: u32, dmg: u32) -> u32 {
-    hp - dmg // Unsigned integers can never be less than 0
 }
 
 #[cfg(test)]
@@ -104,7 +130,7 @@ mod tests {
 
     // Test C: panic! if an attack occurs on an entity with 0 HP
     #[test]
-    #[should_panic(expected = "Entities with 0 HP must not be attacked.")]
+    #[should_panic(expected = "Cannot attack a fallen entity")]
     fn overkill_prevention() {
         let mut undead: Undead = Undead {
             hp: 50,
@@ -114,5 +140,23 @@ mod tests {
 
         damage(&mut undead, 50); // Now 0
         damage(&mut undead, 50); // Should panic here
+    }
+
+    // Test D: Passing an invalid Arena ID propagates an Err instead of panic!
+    #[test]
+    fn encounter_loader_check() -> Result<(), String> {
+        let valid_arena_ids: [u32; 5] = [1, 2, 3, 4, 5];
+
+        let encounter: Encounter = Encounter { id: 1 };
+        let encounter2: Encounter = Encounter { id: 2 };
+        let encounter3: Encounter = Encounter { id: 999 };
+
+        // let encounters: [Encounter; 3] = [encounter, encounter2, encounter3];
+
+        encounter.validate_encounter_id(&valid_arena_ids)?;
+        encounter2.validate_encounter_id(&valid_arena_ids)?;
+        // encounter3.validate_encounter_id(&valid_arena_ids)?;
+
+        Ok(()) // satisfies return type contract
     }
 }
