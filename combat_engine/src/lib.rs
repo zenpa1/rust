@@ -14,17 +14,30 @@ enum Status {
     /*
     Concept - an enum wherein its variants are pure tags with no values attached,
     representing the IDEA such as Poison
-    Instance - a struct or enum called ActiveDebuf that pairs an Element with a u32 value,
+    Instance - a struct or enum called ActiveDebuff that pairs an Element with a u32 value,
     such as a Poison debuff ticking for 10 damage
     */
     Burn,
     Poison,
 }
 
-struct Undead {
+// Test C Materials
+pub fn damage(entity: &mut Undead, damage: u32) {
+    // As we are dealing with u32 values, it will never be negative to begin with!
+    // However, we need to account for an overkill anomaly, wherein it should not work
+    // on a target with 0 HP left (useless calculation)
+
+    if entity.hp == 0 {
+        panic!("Entities with 0 HP must not be attacked.");
+    } else {
+        entity.hp -= damage; // Mutation, don't forget
+    }
+}
+
+pub struct Undead {
     hp: u32,
     resistance: Vec<Status>, // A list of resistances
-    weakness: Vec<Status>, // A list of weaknesses
+    weakness: Vec<Status>,   // A list of weaknesses
 }
 
 impl Undead {
@@ -41,7 +54,8 @@ impl Undead {
 
         // Iterate through resistance list and match
         for resistance in &self.resistance {
-            if status == resistance { // For comparing two variables dynamically
+            if status == resistance {
+                // For comparing two variables dynamically
                 println!("Undead is resistant to {status:?}!");
                 return false;
             }
@@ -81,6 +95,24 @@ mod tests {
         };
 
         // assert_eq!(undead.apply_status(&Status::Poison), true, "Alert: Poison was applied to an Undead entity."); // fail
-        assert_eq!(undead.apply_status(&Status::Poison), false, "Alert: Poison was applied to an Undead entity."); // pass
+        assert_eq!(
+            undead.apply_status(&Status::Poison),
+            false,
+            "Alert: Poison was applied to an Undead entity."
+        ); // pass
+    }
+
+    // Test C: panic! if an attack occurs on an entity with 0 HP
+    #[test]
+    #[should_panic(expected = "Entities with 0 HP must not be attacked.")]
+    fn overkill_prevention() {
+        let mut undead: Undead = Undead {
+            hp: 50,
+            resistance: vec![Status::Poison],
+            weakness: vec![Status::Burn],
+        };
+
+        damage(&mut undead, 50); // Now 0
+        damage(&mut undead, 50); // Should panic here
     }
 }
