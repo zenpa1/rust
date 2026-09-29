@@ -2,6 +2,10 @@ pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
 
+fn internal_adder(left: u64, right: u64) -> u64 {
+    left + right
+}
+
 #[derive(Debug)]
 struct Rectangle {
     width: u32,
@@ -35,7 +39,6 @@ mod marcus {
     //     let result = add(2, 2);
     //     assert_eq!(result, 4);
     // }
-    
 
     // #[test]
     // fn delete_friends() {
@@ -70,5 +73,11 @@ mod marcus {
         };
 
         assert!(!smaller.can_hold(&larger));
+    }
+
+    #[test]
+    fn internal() {
+        let result = internal_adder(2, 2);
+        assert_eq!(result, 4);
     }
 }
