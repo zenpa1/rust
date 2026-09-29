@@ -1,4 +1,6 @@
 use std::fs;
+use std::thread;
+use std::time::Duration;
 
 #[cfg(test)]
 mod tests {
@@ -40,5 +42,12 @@ mod tests {
         assert_eq!(result, 4);
 
         println!("Hi! I am an ASCII map (idk what to put here)");
+    }
+
+    // Trial C: A time-consuming task
+    #[test]
+    #[ignore]
+    fn take_long() {
+        thread::sleep(Duration::from_secs(4));
     }
 }
