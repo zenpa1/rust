@@ -12,17 +12,20 @@ fn main() {
     dbg!() - macro for diagnostics; writes to stderr instead of stdout unlike println!
     */
     let args: Vec<String> = env::args().collect();
-    dbg!(&args);
-
-    // &args[0] reserved for name of binary (used in calls and dynamic pathing)
-    let query = &args[1];
-    let file_path = &args[2];
-
-    println!("Searching for {query}");
-    println!("In file {file_path}");
+    
+    // Logic is now handed to parse_config, so main is not responsible for
+    // mapping command line arguments and variables
+    let (query, file_path) = parse_config(&args);
 
     // Takes file_path, opens file, and returns std::io::Result<String>
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
 
     println!("With text:\n{contents}");
+}
+
+fn parse_config(args: &[String]) -> (&str, &str) {
+    let query = &args[1];
+    let file_path = &args[2];
+
+    (query, file_path) // Return a tuple containing two string slices
 }
