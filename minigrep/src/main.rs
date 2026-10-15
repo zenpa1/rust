@@ -21,7 +21,15 @@ fn main() {
         process::exit(1);
     });
 
-    run(config);
+    println!("Searching for {}", config.query);
+    println!("In file {}", config.file_path);
+
+    // run returns () if successful so we only care about detecting an error
+    // meaning we don't need unwrap_or_else
+    if let Err(e) = run(config) {
+        println!("Application error: {e}");
+        process::exit(1);
+    }
 }
 
 // Introducing a struct to convey grouping and allow future maintainers to understand
