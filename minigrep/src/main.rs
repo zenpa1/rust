@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::process;
+use std::error::Error;
 
 fn main() {
     /*
@@ -20,12 +21,7 @@ fn main() {
         process::exit(1);
     });
 
-    // Takes file_path, opens file, and returns std::io::Result<String>
-    // Also now uses config. to access
-    let contents =
-        fs::read_to_string(config.file_path).expect("Should have been able to read the file");
-
-    println!("With text:\n{contents}");
+    run(config);
 }
 
 // Introducing a struct to convey grouping and allow future maintainers to understand
@@ -33,6 +29,20 @@ fn main() {
 struct Config {
     query: String,
     file_path: String,
+}
+
+// For now, Box<dyn Error> means the function will return a type that implements
+// the Error trait, but no particular type, allowing us to return error values
+// that may be of different types in different error cases
+
+// dyn is short for dynamic
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    // Takes file_path, opens file, and returns std::io::Result<String>
+    let contents = fs::read_to_string(config.file_path)?; // ? returns error value for caller to handle
+
+    println!("With text:\n{contents}");
+
+    Ok(()) // Previously returned unit type, but now kept as a value inside Ok case
 }
 
 impl Config {
