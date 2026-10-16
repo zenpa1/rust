@@ -2,6 +2,7 @@ use std::env;
 use std::fs;
 use std::process;
 use std::error::Error;
+use minigrep::search;
 
 fn main() {
     /*
@@ -48,7 +49,9 @@ fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // Takes file_path, opens file, and returns std::io::Result<String>
     let contents = fs::read_to_string(config.file_path)?; // ? returns error value for caller to handle
 
-    println!("With text:\n{contents}");
+    for line in search(&config.query, &contents) {
+        println!("{line}");
+    }
 
     Ok(()) // Previously returned unit type, but now kept as a value inside Ok case
 }
