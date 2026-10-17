@@ -19,7 +19,7 @@ fn main() {
 
     // Instead of a separate function, we made a new function as an implementation of Config
     let config = Config::build(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {err}");
+        eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
 
@@ -29,7 +29,7 @@ fn main() {
     // run returns () if successful so we only care about detecting an error
     // meaning we don't need unwrap_or_else
     if let Err(e) = run(config) {
-        println!("Application error: {e}");
+        eprintln!("Application error: {e}");
         process::exit(1);
     }
 }
