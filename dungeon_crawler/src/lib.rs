@@ -42,7 +42,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents: String = fs::read_to_string(config.file_path)?;
 
     // Deref coercion turns &String into &str automatically
-    let matched: Vec<&str> = search(&config.query, &contents);
+    // let matched: Vec<&str> = search(&config.query, &contents);
 
     println!(
         "Search initialized by {} in {}",
@@ -51,14 +51,14 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     println!("\n====== MATCHED ======");
 
-    for line in &matched {
-        println!("{line}");
-    }
+    // for line in &matched {
+    //     println!("{line}");
+    // }
 
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_sensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     // Create a mutable vector to keep matched lines
     // idiomatic over vec![] for creating empty vectors in generic code
     // whereas vec![] is often used when initializing with elements
@@ -75,6 +75,20 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     results
 }
 
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let query: String = query.to_lowercase();
+
+    let mut results: Vec<&str> = Vec::new();
+
+    for line in contents.lines() {
+        if line.to_lowercase().contains(&query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
 #[cfg(test)]
 mod tests {
     use std::assert_eq;
@@ -82,7 +96,28 @@ mod tests {
     use super::*;
 
     #[test]
-    fn search_one_result() {
+    fn test_search_case_insensitive() {
+        let query: &str = "sWoRd";
+
+        let contents: &str = "\
+I am the bone of my sword.
+Steel is my body and fire is my blood.
+I have forged over a thousand blades,
+Unknown to Death, nor known to Life.
+I have withstood pain to create many weapons,
+Yet those hands will never hold anything.
+So as I pray, Unlimited Blade Works.
+Hello Sword.
+        ";
+
+        assert_eq!(
+            vec!["I am the bone of my sword.", "Hello Sword."],
+            search_case_insensitive(query, contents)
+        );
+    }
+
+    #[test]
+    fn test_search_case_sensitive() {
         let query: &str = "sword";
 
         let contents: &str = "\
@@ -95,6 +130,9 @@ Yet those hands will never hold anything.
 So as I pray, Unlimited Blade Works.
         ";
 
-        assert_eq!(vec!["I am the bone of my sword."], search(query, contents));
+        assert_eq!(
+            vec!["I am the bone of my sword."],
+            search_case_sensitive(query, contents)
+        );
     }
 }
