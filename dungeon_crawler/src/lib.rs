@@ -1,3 +1,4 @@
+use std::env;
 use std::error::Error;
 use std::fs;
 
@@ -6,6 +7,7 @@ pub struct Config {
     pub sector_id: String,
     pub query: String,
     pub file_path: String,
+    pub ignore_case: bool,
 }
 
 impl Config {
@@ -14,13 +16,23 @@ impl Config {
         if args.len() < 4 {
             return Err("Not enough arguments. Usage: cargo run <hero_name> <sector_id> <query>");
         } else if args.len() > 4 {
-            eprintln!("Warning: Ignoring surplus arguments.");
+            eprintln!("Warning: Ignoring surplus arguments not related to CLI flags.");
         }
 
         // .clone() is good for now
         let hero_name: String = args[1].clone();
         let sector_id: String = args[2].clone();
         let query: String = args[3].clone();
+
+        let ignore_case: bool = if args.contains(&String::from("--case-sensitive")) {
+            false
+        } else if args.contains(&String::from("-i"))
+            || args.contains(&String::from("--case-insensitive"))
+        {
+            true
+        } else {
+            env::var("IGNORE_CASE").is_ok()
+        };
 
         // Invoke via type namespace Self:: as it adapts if the struct name changes
         let file_path: String = Self::build_file_path(&sector_id);
@@ -30,6 +42,7 @@ impl Config {
             sector_id,
             query,
             file_path,
+            ignore_case,
         })
     }
 
@@ -41,8 +54,11 @@ impl Config {
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents: String = fs::read_to_string(config.file_path)?;
 
-    // Deref coercion turns &String into &str automatically
-    // let matched: Vec<&str> = search(&config.query, &contents);
+    let results: Vec<&str> = if config.ignore_case {
+        search_case_insensitive(&config.query, &contents)
+    } else {
+        search_case_sensitive(&config.query, &contents)
+    };
 
     println!(
         "Search initialized by {} in {}",
@@ -51,9 +67,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     println!("\n====== MATCHED ======");
 
-    // for line in &matched {
-    //     println!("{line}");
-    // }
+    for line in &results {
+        println!("{line}");
+    }
 
     Ok(())
 }
