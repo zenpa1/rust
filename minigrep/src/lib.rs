@@ -17,7 +17,9 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a st
     // Mutable vector for storing matching lines
     let mut results: Vec<&str> = Vec::new();
 
-    // Lowercase to make insensitive
+    // Lowercase to make insensitive (via shadowing)
+    // Returns a String because changing character casing can alter byte representation
+    // or byte count in UTF-8
     let query: String = query.to_lowercase();
 
     // Returns an iterator (line-by-line iteration of strings)

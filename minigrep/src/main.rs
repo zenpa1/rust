@@ -1,8 +1,9 @@
+use minigrep::search;
+use minigrep::search_case_insensitive;
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::process;
-use std::error::Error;
-use minigrep::search;
 
 fn main() {
     /*
@@ -35,9 +36,10 @@ fn main() {
 
 // Introducing a struct to convey grouping and allow future maintainers to understand
 // how the different values relate to each other and what their purpose is
-struct Config {
-    query: String,
-    file_path: String,
+pub struct Config {
+    pub query: String,
+    pub file_path: String,
+    pub ignore_case: bool,
 }
 
 // For now, Box<dyn Error> means the function will return a type that implements
@@ -49,7 +51,14 @@ fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // Takes file_path, opens file, and returns std::io::Result<String>
     let contents = fs::read_to_string(config.file_path)?; // ? returns error value for caller to handle
 
-    for line in search(&config.query, &contents) {
+    // Environment variable for the function to decide which function to use
+    let results: Vec<&str> = if config.ignore_case {
+        search_case_insensitive(&config.query, &contents)
+    } else {
+        search(&config.query, &contents)
+    };
+
+    for line in results {
         println!("{line}");
     }
 
@@ -72,14 +81,36 @@ impl Config {
         let query: String = args[1].clone();
         let file_path: String = args[2].clone();
 
-        Ok(Config { query, file_path })
+        // // env::var returns a Result that is Ok variant or Err variant depending if an environment variable is set
+        // // is_ok() returns True if the result is Ok (we don't care about what value it is as long as it is set)
+        // let env_ignore: bool = env::var("IGNORE_CASE").is_ok();
+
+        // // CLI flag argument
+        // let cli_ignore: bool =
+        //     args.contains(&String::from("-i")) || args.contains(&String::from("--ignore-case"));
+
+        // // Combine to compute final ignore_case boolean
+        // // But what if I placed IGNORE_CASE=1 and --case-sensitive?
+        // let ignore_case: bool = env_ignore || cli_ignore;
+
+        // Explicit precedence hierarchy
+        // 1. Manual case sensitivity for a single command while IGNORE_CASE=1
+        // 2. -i or --ignore-case argument flag
+        // 3. The environment variable gets the least priority as it is set for the whole session
+        let ignore_case: bool = if args.contains(&String::from("--case-sensitive")) {
+            false
+        } else if args.contains(&String::from("-i"))
+            || args.contains(&String::from("--ignore-case"))
+        {
+            true
+        } else {
+            env::var("IGNORE_CASE").is_ok()
+        };
+
+        Ok(Config {
+            query,
+            file_path,
+            ignore_case,
+        })
     }
 }
-
-// fn parse_config(args: &[String]) -> Config {
-//     let query = args[1].clone(); // .clone() - easy yet inefficient; avoids lifetime management
-//     let file_path = args[2].clone();
-
-//     Config { query, file_path } // Return a Config with two Strings
-//     // Now also conveys that query and file_path are related
-// }
