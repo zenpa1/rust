@@ -1,3 +1,6 @@
+use std::thread;
+use std::time::Duration;
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 enum ShirtColor {
     Red,
@@ -10,7 +13,10 @@ struct Inventory {
 
 impl Inventory {
     fn giveaway(&self, user_preference: Option<ShirtColor>) -> ShirtColor {
-        user_preference.unwrap_or_else(|| self.most_stocked())
+        user_preference.unwrap_or_else(|| {
+            println!("No preference found. Opting for most stocked...");
+            self.most_stocked()
+        })
     }
 
     fn most_stocked(&self) -> ShirtColor {
@@ -33,6 +39,25 @@ impl Inventory {
     }
 }
 
+fn generate_workout(intensity: u32, random_number: u32) {
+    let expensive_closure = |num: u32| -> u32 {
+        println!("calculating slowly...");
+        thread::sleep(Duration::from_secs(2));
+        num
+    };
+
+    if intensity < 25 {
+        println!("Today, do {} pushups!", expensive_closure(intensity));
+        println!("Next, do {} situpts!", expensive_closure(intensity));
+    } else {
+        if random_number == 3 {
+            println!("Take a break today! Remember to stay hydrated!");
+        } else {
+            println!("Today, run for {} minutes!", expensive_closure(intensity))
+        };
+    }
+}
+
 fn main() {
     let store = Inventory {
         shirts: vec![ShirtColor::Blue, ShirtColor::Red, ShirtColor::Blue],
@@ -51,4 +76,24 @@ fn main() {
         "The user with preference {:?} gets {:?}",
         user_pref2, giveaway2
     );
+
+    // let simulated_user_specified_value = 10;
+    // let simulated_random_number = 7;
+
+    // generate_workout(simulated_user_specified_value, simulated_random_number);
+
+    let mut list = vec![1, 2, 3];
+    println!("Before defining closure: {list:?}");
+
+    // // Immutable borrow
+    // let only_borrows = || println!("From closure: {list:?}");
+
+    // Mutable borrow
+    let mut borrows_mutably = || list.push(7);
+
+    // println!("Before calling closure: {list:?}");
+    // only_borrows();
+    borrows_mutably();
+
+    println!("After calling closure: {list:?}");
 }
