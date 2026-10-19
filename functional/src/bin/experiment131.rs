@@ -82,18 +82,39 @@ fn main() {
 
     // generate_workout(simulated_user_specified_value, simulated_random_number);
 
-    let mut list = vec![1, 2, 3];
-    println!("Before defining closure: {list:?}");
+    // let mut list = vec![1, 2, 3];
+    // println!("Before defining closure: {list:?}");
 
     // // Immutable borrow
     // let only_borrows = || println!("From closure: {list:?}");
 
-    // Mutable borrow
-    let mut borrows_mutably = || list.push(7);
+    // // Mutable borrow
+    // let mut borrows_mutably = || list.push(7);
 
     // println!("Before calling closure: {list:?}");
     // only_borrows();
-    borrows_mutably();
 
-    println!("After calling closure: {list:?}");
+    // borrows_mutably();
+    // borrows_mutably();
+    // borrows_mutably();
+
+    // // Mutable borrow experiment
+    // let mut borrows_mutably = |mut list: Vec<u32>| list.push(67);
+    // println!("Before calling closure: {list:?}");
+
+    // borrows_mutably(list);
+
+    // println!("After calling closure: {list:?}");
+
+    let list = vec![1, 2, 3];
+    println!("Before defining closure: {list:?}");
+
+    // Prints the vector in a new thread rather than in the main thread
+    // In this case, we give the thread a closure to run as an argument
+    // If we remove move keyword:
+    // closure may outlive the current function, but it borrows `list`, which is owned by the current function
+    thread::spawn(move || println!("From thread: {list:?}")).join().unwrap();
+
+    // Already consumed/moved; won't compile
+    // println!("{list:?}");
 }
