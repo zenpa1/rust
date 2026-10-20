@@ -58,6 +58,12 @@ fn generate_workout(intensity: u32, random_number: u32) {
     }
 }
 
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
 fn main() {
     let store = Inventory {
         shirts: vec![ShirtColor::Blue, ShirtColor::Red, ShirtColor::Blue],
@@ -113,8 +119,69 @@ fn main() {
     // In this case, we give the thread a closure to run as an argument
     // If we remove move keyword:
     // closure may outlive the current function, but it borrows `list`, which is owned by the current function
-    thread::spawn(move || println!("From thread: {list:?}")).join().unwrap();
+    thread::spawn(move || println!("From thread: {list:?}"))
+        .join()
+        .unwrap();
 
     // Already consumed/moved; won't compile
     // println!("{list:?}");
+
+    let mut rect_list = [
+        Rectangle {
+            width: 10,
+            height: 1,
+        },
+        Rectangle {
+            width: 3,
+            height: 5,
+        },
+        Rectangle {
+            width: 7,
+            height: 12,
+        },
+    ];
+
+    // // sort_by_key() uses FnMut instea of FnOnce because it calls the closure multiple times:
+    // // once for each item in the slice
+    // // Does not capture, mutate, or move anything out from its environment, so meets trait bound requirements
+    // rect_list.sort_by_key(|r| r.width); // Sorts the slice in ASCENDING order
+    // println!("{rect_list:#?}");
+
+    // // In contrast, an example using the `FnOnce` trait as it moves a value out of its environment
+    // let mut sort_operations = vec![];
+    // let value = String::from("closure called");
+
+    // rect_list.sort_by_key(|r| {
+    //     // captured by this FnMut closure
+    //     sort_operations.push(value); // value is moved here
+    //     /*
+    //     In other words, when we call it the first time, the closure executes and push(value)
+    //     takes full ownership of the String and moves it out of the closure into sort_operations
+
+    //     However, calling it the second time (because once every item), the value is already gone
+
+    //     Because the code inside attempts to move value out, Rust marks this closure as
+    //     FnOnce only, so handing this FnOnce closure to sort_by_key which expects an FnMut stops you
+    //     immediately
+    //     */
+    //     r.width
+    // });
+
+    // println!("rect_list:#?");
+
+    // This version works because integers implement the Copy trait, meaning we just add
+    // instead of moving a String via ownership (still FnMut because the closure gets called multiple times)
+    let mut num_sort_operations = 0;
+    rect_list.sort_by_key(|r| {
+        num_sort_operations += 1;
+        r.width
+    });
+
+    println!("{rect_list:#?}, sorted in {num_sort_operations} operations");
+
+    let mut a = String::from("Hello");
+    let b = &mut a;
+    println!("{b}");
+    b.push_str("world ");
+    println!("{a}");
 }
