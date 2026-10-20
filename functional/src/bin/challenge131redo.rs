@@ -1,15 +1,20 @@
 fn main() {
-    let potion: Potion = Potion {
-        name: String::from("Healing Potion"),
-        effect: String::from("Healing"),
-    };
+    // let potion: Potion = Potion {
+    //     name: String::from("Healing Potion"),
+    //     effect: String::from("Healing"),
+    // };
 
     let mut hero: Hero = Hero {
         hp: 100,
         mp: 50,
         status: None,
-        inventory: vec![Item::Potion(potion)],
+        inventory: vec![Item::Potion(Potion {
+            name: String::from("Healing Potion"),
+            effect: String::from("Healing"),
+        })],
     };
+
+    // println!("{potion:?}"); // was moved into hero.inventory, so invalid
 
     // Fn Test
     let ready_check = || {
@@ -36,6 +41,15 @@ fn main() {
     // process_combat_loop(battle, total_damage_dealt); // doesn't work as it mutably borrows and tries to immutably borrow for print
     process_combat_loop(battle); // NLL states that mutable borrow ends here
     println!("Total damage dealt to Hero: {}", total_damage_dealt); // so I can immutably borrow here with no issue!
+
+    // FnOnce Test
+    let consume_item = || {
+        let item = hero.inventory.pop().expect("Inventory is empty!");
+        item
+    };
+
+    process_consumable(consume_item);
+    // process_consumable(consume_item); // use of moved value, which emphasizes the fact that you can only pull the trigger ONCE
 }
 
 pub struct Hero {
