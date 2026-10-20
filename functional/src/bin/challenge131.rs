@@ -1,5 +1,6 @@
 use std::thread;
 
+#[derive(Debug)]
 struct Character {
     hp: u32,
     mp: u32,
@@ -20,12 +21,13 @@ fn main() {
         println!("Using Fireball Scroll! (called closure)");
         fireball_scroll
     };
+
     let consumed_item: String = use_item();
     println!("I used {consumed_item}!\n");
 
     // Failure Conditions:
     // use_item(); // use of moved value
-    // TODO: how do I test a method expecting an FnMut bound
+    // record_kills(use_item); // issue: record_kills expects a return of unit type (), not String (fireball_scroll)
 
     // 2. FnMut Kill Counter
     let mut monsters_slain: u32 = 0;
@@ -66,11 +68,27 @@ fn main() {
             character.compute_combat_power(),
         );
     };
+    message();
+    message();
     aura_read_thrice(message);
 
     // 4. Off-thread Event Logger
+    println!("Before defining closure: {character:#?}");
+    thread::spawn(move || {
+        /*
+        Deleting move results in: closure may outlive the current function, but it borrows `character`,
+        which is owned by the current function may outlive borrowed value `character`
+
+        In other words, creating a thread and expecting unmoved data to live as long as the closure is invalid as they are
+        in different scope stacks
+        */
+        println!("Now in new thread: {character:#?}");
+    })
+    .join()
+    .unwrap();
 }
 
+// Functions below are a bit hard to memorize aside their trait bound
 fn aura_read_thrice<F: Fn()>(read: F) {
     // Intended only for reading thrice
     read();
