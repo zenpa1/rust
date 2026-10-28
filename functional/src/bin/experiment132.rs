@@ -75,4 +75,4 @@ fn main() {
 
     // item is still there
     println!("{:?}", numbers2_iter.next());
-;}
+}
