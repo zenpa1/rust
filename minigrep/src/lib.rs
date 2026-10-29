@@ -1,16 +1,25 @@
+// pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+//     // Mutable vector for storing matching lines
+//     let mut results: Vec<&str> = Vec::new();
+
+//     // Returns an iterator (line-by-line iteration of strings)
+//     for line in contents.lines() {
+//         // Check whether current line contains query string
+//         if line.contains(query) {
+//             results.push(line);
+//         }
+//     }
+
+//     results
+// }
+
+// New: Concise way using iterator adapter methods, functional programming style prefers
+// to minimize the amount of mutable state to make code clearer
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    // Mutable vector for storing matching lines
-    let mut results: Vec<&str> = Vec::new();
-
-    // Returns an iterator (line-by-line iteration of strings)
-    for line in contents.lines() {
-        // Check whether current line contains query string
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-
-    results
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
