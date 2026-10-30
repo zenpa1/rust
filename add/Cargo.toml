@@ -1,0 +1,3 @@
+[workspace]
+resolve = "3"
+members = ["add_one","adder"]
