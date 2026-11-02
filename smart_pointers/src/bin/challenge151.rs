@@ -5,7 +5,7 @@ use crate::Room::{Nil, Recurse};
 
 fn main() {
     let room = Recurse(1, Box::new(Recurse(2, Box::new(Nil))));
-    
+
     // You can read the nested data without taking ownership via references
     // Borrow 'next_box' as a reference (&Box<Room>)
     if let Recurse(id, ref next_box) = room {
@@ -37,7 +37,6 @@ fn main() {
     //         println!("Successfully peeked into room 1 and room 2!");
     //     }
     // }
-    
 }
 
 enum Room {
@@ -54,7 +53,17 @@ enum Term {
 impl Term {
     pub fn simplify(self) -> Term {
         match self {
-            Term::Not(content) if *content ==
+            // Case 1: Match `Not`, move `content` (Box<Term>) out
+            Term::Not(content) => match *content {
+                // Double Negation Elimination: Not(Not(x)) -> x
+                Term::Not(inner_content) => inner_content.simplify(),
+
+                // Standard Negations
+                Term::True => Term::False,
+                Term::False => Term::True,
+            },
+            // Base cases (True, False) remain unchanged
+            other => other,
         }
     }
 }
